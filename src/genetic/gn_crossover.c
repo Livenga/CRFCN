@@ -41,6 +41,6 @@ void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
     // 突然変異とか...
     m_rate = (double)(rand() % 100) / 100.0;
     if(m_rate < MUTATION_RATE)
-      gmutation(ch_gtype[pos]);
+      gmutation(ch_gtype[pop]);
   }
 }
