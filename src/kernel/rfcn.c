@@ -85,7 +85,14 @@ __kernel void rfcn(
           }
         }
         else {
-          tmp_op = 0.0;
+          switch(r_func[i]) {
+            case SUM: tmp_op = calc_sum(column, internal_input,
+                          external_input, unit); break;
+            case MAX: tmp_op = calc_max(column, internal_input,
+                          external_input, unit); break;
+            case MIN: tmp_op = calc_min(column, internal_input,
+                          external_input, unit); break;
+          }
         }
         tmp_op_rfcn[i] = tmp_op;
       }

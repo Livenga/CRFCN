@@ -74,4 +74,12 @@ double calc_piecewise(double x, double a);
 double calc_threshold(double x, double a);
 double calc_gaussian(double x, double a);
 double calc_step(double x, double a);
+
+
+double calc_sum(int column,
+    double *internal_input, double external_input, double *hidden);
+double calc_max(int column,
+    double *internal_input, double external_input, double *hidden);
+double calc_min(int column,
+    double *internal_input, double external_input, double *hidden);
 #endif

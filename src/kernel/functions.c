@@ -32,3 +32,42 @@ double calc_step(double x, double a) {
   else if(x <= a) return 0.0;
   return 0.0;
 }
+
+double calc_sum(int column,
+    double *internal_input, double external_input, double *hidden) {
+  int i;
+  double sum = 0.0;
+
+  for(i = 0; i < 25; i++)
+    sum += internal_input[i];
+  sum += external_input;
+  for(i = 0; i < column; i++)
+    sum += hidden[i];
+  return sum;
+}
+
+double calc_max(int column,
+    double *internal_input, double external_input, double *hidden) {
+  int i;
+  double maxof = internal_input[0];
+
+  for(i = 1; i < 25; i++)
+    if(maxof < internal_input[i]) maxof = internal_input[i];
+  if(maxof < external_input) maxof = external_input;
+  for(i = 0; i < column; i++)
+    if(maxof < hidden[i]) maxof = hidden[i];
+  return maxof;
+}
+
+double calc_min(int column,
+    double *internal_input, double external_input, double *hidden) {
+  int i;
+  double minof = internal_input[0];
+
+  for(i = 1; i < 25; i++)
+    if(minof > internal_input[i]) minof = internal_input[i];
+  if(minof > external_input) minof = external_input;
+  for(i = 0; i < column; i++)
+    if(minof > hidden[i]) minof = hidden[i];
+  return minof;
+}
