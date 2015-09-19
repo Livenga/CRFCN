@@ -23,6 +23,7 @@ typedef genotype_t * genotype;
 #define POPULATION_SIZE      (50)
 #define CHILDREN_SIZE        (30)
 #define MUTATION_RATE        (0.05)
+#define EPSILON              (0.98)
 
 /* src/genetic/gn_init.c */
 extern genotype galloc(void);

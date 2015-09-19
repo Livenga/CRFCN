@@ -161,8 +161,8 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     slt_best = numof_best_fitness(ch_fitness, CHILDREN_SIZE);
     slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
 
+    best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
     if(cnt_generation % 10 == 0) {
-      best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
       printf("[経過世代数] %d\n", cnt_generation);
       printf("[個体集合ランダム選択]        %d(%f) and %d(%f)\n",
           slt_rand[0], pr_fitness[slt_rand[0]],
@@ -178,6 +178,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     memmove(pr_gtype[slt_rand[0]], ch_gtype[slt_best], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
     memmove(pr_gtype[slt_rand[1]], ch_gtype[slt_roul], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
 
+    if(EPSILON < pr_fitness[best_num]) break;
     if(sig_quit) break;
   } while(cnt_generation++ != NUMBER_OF_GENERATION);
 
@@ -215,8 +216,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     sprintf(best_output, "best/ext_output%02d.png", tr);
     pnwrite_from_double(best_output, teach.width, teach.height, n_ext_output);
   }
-  conv_regulation(teach.width, teach.height, n_ext_output);
-
 
 db_point:
   clReleaseMemObject(in_width);
