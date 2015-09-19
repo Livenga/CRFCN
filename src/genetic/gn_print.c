@@ -105,6 +105,9 @@ const char *fname(const int f_num) {
     case THRESHOLD: msg = "Threshold"; break;
     case GAUSSIAN:  msg = "Gaussian";  break;
     case STEP:      msg = "Step";      break;
+    case SUM:       msg = "Sum";       break;
+    case MAX:       msg = "Max";       break;
+    case MIN:       msg = "Min";       break;
     case '?': msg = "(nil)";           break;
     default:  msg = "(nil)";           break;
   }
