@@ -25,3 +25,6 @@ void gmutation(genotype gtype) {
   gtype[point_y] -= gtype[point_y] & (0x0F << (point_x * 4));
   gtype[point_y] += (value << (point_x * 4)) - temp_value;
 }
+
+void gunit_mutation(genotype gtype) {
+}

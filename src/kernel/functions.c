@@ -71,3 +71,49 @@ double calc_min(int column,
     if(minof > hidden[i]) minof = hidden[i];
   return minof;
 }
+
+double calc_average(int column,
+    double *internal_input, double external_input, double *hidden) {
+  int i, cnt = 0;
+  double sum = 0.0;
+  for(i = 0; i < 25; i++) {
+    if(internal_input[i] != 0.0) {
+      sum += internal_input[i];
+      cnt++;
+    }
+  }
+
+  if(external_input != 0.0) {
+    sum += external_input;
+    cnt++;
+  }
+
+  for(i = 0; i < column; i++) {
+    if(hidden[i] != 0.0)  {
+      sum += hidden[i];
+      cnt++;
+    }
+  }
+  return sum / (double)cnt;
+}
+
+double calc_range(int column,
+    double *internal_input, double external_input, double *hidden) {
+  int i;
+  double maxof = internal_input[0], minof = internal_input[0];
+
+  for(i = 0; i < 25; i++) {
+    if(maxof < internal_input[i]) maxof = internal_input[i];
+    if(minof > internal_input[i]) minof = internal_input[i];
+  }
+
+  if(maxof < external_input) maxof = external_input;
+  if(minof > external_input) minof = external_input;
+
+  for(i = 0; i < column; i++) {
+    if(maxof < hidden[i]) maxof = hidden[i];
+    if(minof > hidden[i]) minof = hidden[i];
+  }
+
+  return maxof - minof;
+}

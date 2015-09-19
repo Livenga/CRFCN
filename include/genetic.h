@@ -51,7 +51,7 @@ extern double calc_fitness(const int width, const int height,
 
 enum function_number {
   SIGMOID, LINEAR, PIECEWISE, THRESHOLD, GAUSSIAN, STEP, SUM, MAX, MIN,
-  MED, AVE, RANGE
+  AVE, RANGE
 };
 #else
 
@@ -64,9 +64,8 @@ enum function_number {
 #define SUM       (6)
 #define MAX       (7)
 #define MIN       (8)
-#define MED       (9)
-#define AVE       (10)
-#define RANGE     (11)
+#define AVE       (9)
+#define RANGE     (10)
 
 double calc_sigmoid(double x, double a);
 double calc_linear(double x, double a);
@@ -81,5 +80,9 @@ double calc_sum(int column,
 double calc_max(int column,
     double *internal_input, double external_input, double *hidden);
 double calc_min(int column,
+    double *internal_input, double external_input, double *hidden);
+double calc_average(int column,
+    double *internal_input, double external_input, double *hidden);
+double calc_range(int column,
     double *internal_input, double external_input, double *hidden);
 #endif

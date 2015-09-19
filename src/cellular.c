@@ -162,7 +162,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
 
     best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
-    if(cnt_generation % 10 == 0) {
+    if(cnt_generation % 2 == 0) {
       printf("[経過世代数] %d\n", cnt_generation);
       printf("[個体集合ランダム選択]        %d(%f) and %d(%f)\n",
           slt_rand[0], pr_fitness[slt_rand[0]],

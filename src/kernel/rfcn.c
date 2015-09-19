@@ -92,6 +92,10 @@ __kernel void rfcn(
                           external_input, unit); break;
             case MIN: tmp_op = calc_min(column, internal_input,
                           external_input, unit); break;
+            case AVE: tmp_op = calc_average(column, internal_input,
+                          external_input, unit); break;
+            case RANGE: tmp_op = calc_range(column, internal_input,
+                            external_input, unit); break;
           }
         }
         tmp_op_rfcn[i] = tmp_op;
