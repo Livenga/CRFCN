@@ -22,12 +22,15 @@ void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
   unsigned int gate;
 
   for(pop = 0; pop < population; pop++) {
+    ch_gtype[pop][0] =
+      (pr_gtype1[0] & 0x00FFFF) > (pr_gtype2[0] & 0x00FFFF) ?
+      pr_gtype2[0] : pr_gtype1[0];
+
     div_x = (rand() % column);
     div_y = (rand() % row);
 
     gate  = get_gate(div_x);
-
-    for(i = 0; i < div_y; i++)
+    for(i = 1; i < div_y; i++)
       ch_gtype[pop][i] = (pr_gtype1[i] & gate) + (pr_gtype2[i] & ~gate);
 
     for(; i < row; i++) {

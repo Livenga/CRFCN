@@ -112,7 +112,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     ch_gtype[i] = galloc();
   if(__P_DEBUG) printd("[*] 子個体領域の確保に成功.\n");
 
-  goto db_point;
   int slt_rand[2], slt_best, slt_roul, best_num;
   do {
     slt_rand[0] = rand() % POPULATION_SIZE;
