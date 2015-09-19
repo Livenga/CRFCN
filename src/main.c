@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
   cl_prop prop;
   memset(&prop, '\0', sizeof(cl_prop));
+  signal(SIGINT, sig_handle);
 
   char binary_path[1024];
   while((opt = getopt_long(argc, argv, "hvbia:",
@@ -62,8 +63,8 @@ int main(int argc, char *argv[])
   setProperties(binary_path, pid, did, &prop);
 
   /* 画像 */
-  pnread("images/text_mono.png", &teach_data);
-  pnread("images/gleft.png", &in_data);
+  pnread("images/text_mono_50.png", &teach_data);
+  pnread("images/gleft_50.png", &in_data);
 
 #ifdef DEBUG
   printf("\033[1m\033[36m[OpenCL]\033[0m\033[39m\n");
