@@ -5,7 +5,7 @@
 
 genotype galloc(void) {
   genotype buffer;
-  buffer = (genotype)calloc(DEFAULT_GENOTYPE_SIZE, sizeof(genotype_t));
+  buffer = (genotype)calloc(MAX_GENOTYPE_SIZE, sizeof(genotype_t));
 
   /*|  Transition  |  column  |  row  | */
   buffer[0]  = (3 << 16);

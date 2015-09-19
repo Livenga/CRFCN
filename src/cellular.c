@@ -159,10 +159,8 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     pr_fitness[slt_rand[0]] = ch_fitness[slt_best];
     pr_fitness[slt_rand[1]] = ch_fitness[slt_roul];
 
-    memmove(pr_gtype[slt_rand[0]], ch_gtype[slt_best],
-        sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
-    memmove(pr_gtype[slt_rand[1]], ch_gtype[slt_roul],
-        sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
+    memmove(pr_gtype[slt_rand[0]], ch_gtype[slt_best], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
+    memmove(pr_gtype[slt_rand[1]], ch_gtype[slt_roul], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
 
     if(cnt_generation % 10 == 0) {
       best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
