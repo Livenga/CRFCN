@@ -21,7 +21,7 @@ void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
   int i, pop, div_x, div_y;
   unsigned int gate;
 
-  for(pop = 0; pop < population; pop++) {
+  for(pop = 2; pop < population; pop++) {
     ch_gtype[pop][0] =
       (pr_gtype1[0] & 0x00FFFF) > (pr_gtype2[0] & 0x00FFFF) ?
       pr_gtype2[0] : pr_gtype1[0];

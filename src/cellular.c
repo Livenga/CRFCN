@@ -120,6 +120,10 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     while(slt_rand[0] == slt_rand[1])
       slt_rand[1] = rand() % POPULATION_SIZE;
 
+    memmove(ch_gtype[0], pr_gtype[slt_rand[0]],
+        sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
+    memmove(ch_gtype[1], pr_gtype[slt_rand[1]],
+        sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
     // 交叉
     gcrossover(ch_gtype, pr_gtype[slt_rand[0]], pr_gtype[slt_rand[1]],
         CHILDREN_SIZE);
