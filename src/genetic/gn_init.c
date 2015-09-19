@@ -23,7 +23,7 @@ void ginit(genotype gtype) {
 
   for(i = 0; i < column + 2; i++) {
     shift_size = (column + 1 - i) * 4;
-    gtype[1] += (rand() % (STEP + 1)) << shift_size;
+    gtype[1] += (rand() % (MIN + 1)) << shift_size;
     gtype[2] += (rand() % alpha_size) << shift_size;
     gtype[3] += (rand() % 2)          << shift_size;
     gtype[4] += (rand() % thr_size)   << shift_size;
