@@ -177,7 +177,11 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     if(sig_quit) break;
   } while(cnt_generation++ != NUMBER_OF_GENERATION);
 
+  printf("[最終世代] %d\n", cnt_generation);
+  printf("最適値: %f(%d)\n", pr_fitness[best_num], best_num);
+
   best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
+  gprint(best_num, pr_gtype[best_num]);
   memmove(n_in_output,  n_input, sizeof(double) * img_size);
   memmove(n_ext_output, n_input, sizeof(double) * img_size);
 
@@ -209,7 +213,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
   }
   conv_regulation(teach.width, teach.height, n_ext_output);
 
-  printf("[最終世代] %d\n", cnt_generation);
 
 db_point:
   clReleaseMemObject(in_width);
