@@ -27,11 +27,20 @@ typedef genotype_t * genotype;
 /* src/genetic/gn_init.c */
 extern genotype galloc(void);
 extern void ginit(genotype gtype);
-/* src/genetic/gn_print.c */
-extern void gprint(const int num, genotype gtype);
+
 /* src/genetic/gn_util.c */
 extern void free_genotype(genotype *gtype, const int population);
 
+/* src/genetic/gn_crossover.c */
+extern void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
+    const int population);
+
+/* src/genetic/gn_selection.c */
+extern int numof_best_fitness(const double *fitness, const int population);
+extern int numof_roulette(const double *fitness, const int population);
+
+/* src/genetic/gn_print.c */
+extern void gprint(const int num, genotype gtype);
 /* src/calc/fitness.c */
 extern double calc_fitness(const int width, const int height,
     double *t, double *o, double *w);
