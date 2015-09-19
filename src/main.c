@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 #include <getopt.h>
 #include <CL/cl.h>
 #include "../include/opencl.h"
@@ -9,6 +10,8 @@
 #include "../include/genetic.h"
 
 extern void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weight);
+void sig_handle(int sig);
+int sig_quit;
 
 struct option long_opt[] = {
   {"help",         no_argument, 0, 'h'},
@@ -105,4 +108,11 @@ void print_help(const char *msg) {
 void print_version(const char *msg) {
   printf("\033[1m%s: Version %s Copyrignt 2015 Livenga. All right reserved.\033[0m\n", msg, CRFCN_VER_STRING);
   exit(0);
+}
+
+void sig_handle(int sig) {
+  printf("[-] Forced Termination...\n");
+  sig_quit = 1;
+
+  signal(SIGINT, SIG_DFL);
 }

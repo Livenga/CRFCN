@@ -20,6 +20,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
   const boolean __P_DEBUG = 1;
   const int img_size   = teach.width * teach.height;
   const int gtype_size = sizeof(genotype_t) * MAX_GENOTYPE_SIZE;
+  extern int sig_quit;
   // 通常変数
   int i, tr, transition, cnt_generation = 0;
   size_t global_size[2];
@@ -156,22 +157,58 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     slt_best = numof_best_fitness(ch_fitness, CHILDREN_SIZE);
     slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
 
+    if(cnt_generation % 10 == 0) {
+      best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
+      printf("[経過世代数] %d\n", cnt_generation);
+      printf("[個体集合ランダム選択]        %d(%f) and %d(%f)\n",
+          slt_rand[0], pr_fitness[slt_rand[0]],
+          slt_rand[1], pr_fitness[slt_rand[1]]);
+      printf("[子個体集合 最高とルーレット] %d(%f) and %d(%f)\n\n",
+          slt_best, ch_fitness[slt_best], slt_roul, ch_fitness[slt_roul]);
+      printf("[個体集合最高適応度] %d(%f)\n", best_num, pr_fitness[best_num]);
+    }
+
     pr_fitness[slt_rand[0]] = ch_fitness[slt_best];
     pr_fitness[slt_rand[1]] = ch_fitness[slt_roul];
 
     memmove(pr_gtype[slt_rand[0]], ch_gtype[slt_best], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
     memmove(pr_gtype[slt_rand[1]], ch_gtype[slt_roul], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
 
-    if(cnt_generation % 10 == 0) {
-      best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
-      printf("[個体集合ランダム選択]        %d(%f) and %d(%f)\n",
-          slt_rand[0], pr_fitness[slt_rand[0]],
-          slt_rand[1], pr_fitness[slt_rand[1]]);
-      printf("[子個体集合 最高とルーレット] %d(%f) and %d(%f)\n\n",
-          slt_best, ch_fitness[slt_best], slt_roul, ch_fitness[slt_roul]);
-      printf("[個体集合最高適応度] %f %d\n", pr_fitness[best_num], best_num);
-    }
+    if(sig_quit) break;
   } while(cnt_generation++ != NUMBER_OF_GENERATION);
+
+  best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
+  memmove(n_in_output,  n_input, sizeof(double) * img_size);
+  memmove(n_ext_output, n_input, sizeof(double) * img_size);
+
+  transition = (pr_gtype[best_num][0] >> 16) & 0xFF;              // 遷移回数の取得
+  clEnqueueWriteBuffer(prop.queue, cl_gtype, CL_TRUE, 0,   // 遺伝子型の書き込み
+      gtype_size, (const void *)pr_gtype[best_num], 0, NULL, NULL);
+  clEnqueueWriteBuffer(prop.queue, cl_input, CL_TRUE, 0,   // 入力情報
+      sizeof(double) * img_size, (const void *)n_input, 0, NULL, NULL);
+
+  char best_output[1024];
+  for(tr = 0; tr < transition; tr++) {                   // 遷移回数分回す
+    // Kernel関数の実行
+    clEnqueueWriteBuffer(prop.queue, in_output, CL_TRUE, 0,  // 内部入力
+        sizeof(double) * img_size, (const void *)n_in_output, 0, NULL, NULL);
+    clEnqueueWriteBuffer(prop.queue, ext_output, CL_TRUE, 0, // 外部入力
+        sizeof(double) * img_size, (const void *)n_ext_output, 0, NULL, NULL);
+
+    status = clEnqueueNDRangeKernel(prop.queue, prop.kernel, 2, NULL, global_size,
+        NULL, 0, NULL, NULL);
+
+    clEnqueueReadBuffer(prop.queue, in_output, CL_TRUE, 0,
+        sizeof(double) * img_size, (void *)n_in_output, 0, NULL, NULL);
+    clEnqueueReadBuffer(prop.queue, ext_output, CL_TRUE, 0,
+        sizeof(double) * img_size, (void *)n_ext_output, 0, NULL, NULL);
+
+    sprintf(best_output, "best/in_output%02d.png");
+    pnwrite_from_double(best_output, teach.width, teach.height, n_in_output);
+    sprintf(best_output, "best/ext_output%02d.png");
+    pnwrite_from_double(best_output, teach.width, teach.height, n_ext_output);
+  }
+  conv_regulation(teach.width, teach.height, n_ext_output);
 
   printf("[最終世代] %d\n", cnt_generation);
 
