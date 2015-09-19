@@ -8,8 +8,8 @@ genotype galloc(void) {
   buffer = (genotype)calloc(MAX_GENOTYPE_SIZE, sizeof(genotype_t));
 
   /*|  Transition  |  column  |  row  | */
-  buffer[0] = ((rand() % 7) + 3) << 16;
-  //buffer[0]  = (3 << 16);                             // 遷移回数
+  //buffer[0] = ((rand() % 7) + 3) << 16;
+  buffer[0]  = (3 << 16);                             // 遷移回数
   buffer[0] += (DEFAULT_UNIT_SIZE << 8);              // 隠れ層サイズ
   buffer[0] += (DEFAULT_GENOTYPE_SIZE - HEADER_SIZE); // 遺伝型サイズ
 

@@ -21,8 +21,8 @@ typedef genotype_t * genotype;
 #ifndef KERNEL_FUNC
 #define NUMBER_OF_GENERATION (20000)
 #define POPULATION_SIZE      (50)
-//#define POPULATION_SIZE      (1)
 #define CHILDREN_SIZE        (30)
+#define MUTATION_RATE        (0.05)
 
 /* src/genetic/gn_init.c */
 extern genotype galloc(void);
@@ -34,6 +34,9 @@ extern void free_genotype(genotype *gtype, const int population);
 /* src/genetic/gn_crossover.c */
 extern void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
     const int population);
+
+/* src/genetic/gn_mutation.c */
+extern void gmutation(genotype gtype);
 
 /* src/genetic/gn_selection.c */
 extern int numof_best_fitness(const double *fitness, const int population);

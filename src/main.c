@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
   setProperties(binary_path, pid, did, &prop);
 
   /* 画像 */
-  pnread("images/text_mono_50.png", &teach_data);
-  pnread("images/gleft_50.png", &in_data);
+  pnread("images/text_mono_25.png", &teach_data);
+  pnread("images/gleft_25.png", &in_data);
 
 #ifdef DEBUG
   printf("\033[1m\033[36m[OpenCL]\033[0m\033[39m\n");
