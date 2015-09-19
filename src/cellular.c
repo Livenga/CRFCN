@@ -165,7 +165,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
           slt_rand[1], pr_fitness[slt_rand[1]]);
       printf("[子個体集合 最高とルーレット] %d(%f) and %d(%f)\n\n",
           slt_best, ch_fitness[slt_best], slt_roul, ch_fitness[slt_roul]);
-      printf("[個体集合最高適応度] %d(%f)\n", best_num, pr_fitness[best_num]);
+      printf("[個体集合最高適応度] %d(%f)\n\n", best_num, pr_fitness[best_num]);
     }
 
     pr_fitness[slt_rand[0]] = ch_fitness[slt_best];
@@ -186,7 +186,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
       gtype_size, (const void *)pr_gtype[best_num], 0, NULL, NULL);
   clEnqueueWriteBuffer(prop.queue, cl_input, CL_TRUE, 0,   // 入力情報
       sizeof(double) * img_size, (const void *)n_input, 0, NULL, NULL);
-
   char best_output[1024];
   for(tr = 0; tr < transition; tr++) {                   // 遷移回数分回す
     // Kernel関数の実行
@@ -203,9 +202,9 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     clEnqueueReadBuffer(prop.queue, ext_output, CL_TRUE, 0,
         sizeof(double) * img_size, (void *)n_ext_output, 0, NULL, NULL);
 
-    sprintf(best_output, "best/in_output%02d.png");
+    sprintf(best_output, "best/in_output%02d.png", tr);
     pnwrite_from_double(best_output, teach.width, teach.height, n_in_output);
-    sprintf(best_output, "best/ext_output%02d.png");
+    sprintf(best_output, "best/ext_output%02d.png", tr);
     pnwrite_from_double(best_output, teach.width, teach.height, n_ext_output);
   }
   conv_regulation(teach.width, teach.height, n_ext_output);
