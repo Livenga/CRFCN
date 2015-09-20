@@ -4,7 +4,7 @@
 #define EXTERNAL_INPUT    (1)
 #define EXTERNAL_OUTPUT   (1)
 #define INTERNAL_OUTPUT   (1)
-#define DEFAULT_UNIT_SIZE (3)
+#define DEFAULT_UNIT_SIZE (5)
 #define MAX_UNIT_SIZE     (8)
 #define EXTENDED_SIZE     (MAX_UNIT_SIZE - DEFAULT_UNIT_SIZE)
 
