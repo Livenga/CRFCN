@@ -14,7 +14,7 @@ void gmutation(genotype gtype) {
   point_y = (rand() % (row - 1)) + 1;
 
   switch(point_y) {
-    case 1: value = STEP;       break;
+    case 1: value = RANGE + 1;  break;
     case 2: value = alpha_size; break;
     case 3: value = 2;          break;
     case 4: value = thr_size;   break;
@@ -37,7 +37,7 @@ void gunit_mutation(genotype gtype) {
   if(add == 1) { // 増加
     for(i = 1; i < row; i++) {
       switch(i) {
-        case 1 : value = STEP;       break;
+        case 1 : value = RANGE + 1;  break;
         case 2 : value = alpha_size; break;
         case 3 : value = 2;          break;
         case 4 : value = thr_size;   break;

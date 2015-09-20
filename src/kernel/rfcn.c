@@ -34,12 +34,12 @@ __kernel void rfcn(
 
   int ix, iy, posX, posY;
   double input_x, tmp_op;
-  double internal_input[25] = {0.0},
-         external_input = 0.0,
+  double internal_input[25]  = {0.0},
+         external_input      = 0.0,
          unit[MAX_UNIT_SIZE] = {0.0};
 
   double tmp_op_rfcn[MAX_UNIT_SIZE] = {0.0},
-         op_rfcn[MAX_UNIT_SIZE] = {0.0};
+         op_rfcn[MAX_UNIT_SIZE]     = {0.0};
 
   for(spd = 0; spd < 3; spd++) {
     for(i = 0; i < column + 2; i++) {
@@ -90,13 +90,13 @@ __kernel void rfcn(
         }
         else {
           switch(r_func[i]) {
-            case SUM: tmp_op = calc_sum(column, internal_input,
+            case SUM:   tmp_op = calc_sum(column, internal_input,
                           external_input, unit); break;
-            case MAX: tmp_op = calc_max(column, internal_input,
+            case MAX:   tmp_op = calc_max(column, internal_input,
                           external_input, unit); break;
-            case MIN: tmp_op = calc_min(column, internal_input,
+            case MIN:   tmp_op = calc_min(column, internal_input,
                           external_input, unit); break;
-            case AVE: tmp_op = calc_average(column, internal_input,
+            case AVE:   tmp_op = calc_average(column, internal_input,
                           external_input, unit); break;
             case RANGE: tmp_op = calc_range(column, internal_input,
                             external_input, unit); break;

@@ -108,8 +108,8 @@ const char *fname(const int f_num) {
     case SUM:       msg = "Sum";       break;
     case MAX:       msg = "Max";       break;
     case MIN:       msg = "Min";       break;
-    case AVE:       msg = "Average"; break;
-    case RANGE:     msg = "Range"; break;
+    case AVE:       msg = "Average";   break;
+    case RANGE:     msg = "Range";     break;
     case '?': msg = "(nil)";           break;
     default:  msg = "(nil)";           break;
   }
