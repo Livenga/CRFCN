@@ -34,8 +34,12 @@ __kernel void rfcn(
 
   int ix, iy, posX, posY;
   double input_x, tmp_op;
-  double internal_input[25], external_input, unit[MAX_UNIT_SIZE];
-  double tmp_op_rfcn[MAX_UNIT_SIZE], op_rfcn[MAX_UNIT_SIZE];
+  double internal_input[25] = {0.0},
+         external_input = 0.0,
+         unit[MAX_UNIT_SIZE] = {0.0};
+
+  double tmp_op_rfcn[MAX_UNIT_SIZE] = {0.0},
+         op_rfcn[MAX_UNIT_SIZE] = {0.0};
 
   for(spd = 0; spd < 3; spd++) {
     for(i = 0; i < column + 2; i++) {
