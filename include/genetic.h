@@ -4,7 +4,7 @@
 #define EXTERNAL_INPUT    (1)
 #define EXTERNAL_OUTPUT   (1)
 #define INTERNAL_OUTPUT   (1)
-#define DEFAULT_UNIT_SIZE (4)
+#define DEFAULT_UNIT_SIZE (3)
 #define MAX_UNIT_SIZE     (8)
 #define EXTENDED_SIZE     (MAX_UNIT_SIZE - DEFAULT_UNIT_SIZE)
 
@@ -22,7 +22,8 @@ typedef genotype_t * genotype;
 #define NUMBER_OF_GENERATION (20000)
 #define POPULATION_SIZE      (50)
 #define CHILDREN_SIZE        (30)
-#define MUTATION_RATE        (0.05)
+//#define MUTATION_RATE        (0.05)
+#define MUTATION_RATE        (0.1)
 #define EPSILON              (0.98)
 
 /* src/genetic/gn_init.c */
