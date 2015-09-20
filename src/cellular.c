@@ -163,13 +163,13 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
 
     best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
     if(cnt_generation % 2 == 0) {
-      printf("[経過世代数] %d\n", cnt_generation);
-      printf("[個体集合ランダム選択]        %d(%f) and %d(%f)\n",
+      printf("[経過世代数] %5d\n", cnt_generation);
+      printf("[個体集合ランダム選択]        %2d(%f) and %2d(%f)\n",
           slt_rand[0], pr_fitness[slt_rand[0]],
           slt_rand[1], pr_fitness[slt_rand[1]]);
-      printf("[子個体集合 最高とルーレット] %d(%f) and %d(%f)\n\n",
+      printf("[子個体集合 最高とルーレット] %2d(%f) and %2d(%f)\n\n",
           slt_best, ch_fitness[slt_best], slt_roul, ch_fitness[slt_roul]);
-      printf("[個体集合最高適応度] %d(%f)\n\n", best_num, pr_fitness[best_num]);
+      printf("[個体集合最高適応度] %2d(%f)\n\n", best_num, pr_fitness[best_num]);
     }
 
     pr_fitness[slt_rand[0]] = ch_fitness[slt_best];
