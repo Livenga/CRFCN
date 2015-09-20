@@ -16,11 +16,11 @@
 typedef unsigned int genotype_t;
 typedef genotype_t * genotype;
 
-#define CRFCN_VER_STRING "1.0.0"
+#define CRFCN_VER_STRING "1.0.1(a)"
 
 #ifndef KERNEL_FUNC
 #define NUMBER_OF_GENERATION (100000)
-#define POPULATION_SIZE      (10)
+#define POPULATION_SIZE      (50)
 #define CHILDREN_SIZE        (30)
 #define MUTATION_RATE        (0.05)
 #define MUTATION_UNIT_RATE   (0.05)
