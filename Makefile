@@ -1,6 +1,6 @@
 CC = gcc
 #FLAGS = -lm -ljpeg -lpng -lOpenCL -Wall -O2 -g
-FLAGS = -lm -lpng -lOpenCL -g
+FLAGS = -lm -lpng -lOpenCL
 
 NOMAKEDIR = .git% data% doc% src/bin% src/kernel%
 CSOURCES  = $(shell find src/* -name \*.c)
