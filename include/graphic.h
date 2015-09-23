@@ -18,7 +18,7 @@ extern int pnwrite_from_double(const char *path, const int width, const int heig
 /* src/graphic/g_util.c */
 extern double *img_normalize(graphic gdata);
 extern void destroy_graphic(graphic *gdata);
-extern void conv_regulation(const int width, const int height, double *output);
+extern int conv_regulation(const int width, const int height, double *output);
 
 /* src/graphic/g_conv.c */
 extern void conv_weight(graphic teach, graphic input, graphic *weight);
