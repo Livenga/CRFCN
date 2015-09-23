@@ -10,7 +10,7 @@ void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
   const int column = ((pr_gtype1[0] & 0x00FF00) > (pr_gtype2[0] & 0x00FF00)) ?
     ((pr_gtype2[0] & 0x00FF00) >> 8) : ((pr_gtype1[0] & 0x00FF00) >> 8);
 
-  int i, pop, div_x, div_y;
+  int i, j, pop, div_x, div_y;
   unsigned int gate;
   double m_rate, m_unit_rate;
 
@@ -40,5 +40,9 @@ void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
     if(m_unit_rate < MUTATION_UNIT_RATE) {
       gunit_mutation(ch_gtype[pop]);
     }
+
+    gate = get_gate(((ch_gtype[pop][0] >> 8) & 0xFF) + 2);
+    for(j = 0; j < ch_gtype[pop][0] & 0xFF; j++)
+      ch_gtype[pop][j] = ch_gtype[pop][j] & gate;
   }
 }
