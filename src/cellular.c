@@ -32,7 +32,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
   // OpenCL用変数
   cl_int status;
   cl_mem in_width, in_height, cl_gtype;
-  cl_mem cl_input, in_output, ext_output;
+  cl_mem cl_input, in_output, ext_input, ext_output;
 
   srand((unsigned)time(NULL)); // ランダム値のシードを生成
 
@@ -50,19 +50,27 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
       sizeof(int), (void *)&teach.height, &status);
   cl_gtype = clCreateBuffer(prop.context, CL_MEM_READ_ONLY,
       gtype_size, NULL, &status);
-  in_output = clCreateBuffer(prop.context, CL_MEM_READ_WRITE,
+  in_output = clCreateBuffer(prop.context, CL_MEM_READ_WRITE,  // 内部入力
       sizeof(double) * img_size, NULL, NULL);
-  ext_output = clCreateBuffer(prop.context, CL_MEM_READ_WRITE,
+  ext_input = clCreateBuffer(prop.context, CL_MEM_READ_ONLY,   // 外部入力
       sizeof(double) * img_size, NULL, NULL);
+  ext_output = clCreateBuffer(prop.context, CL_MEM_READ_WRITE, // 外部出力
+      sizeof(double) * img_size, NULL, NULL);
+
   // 次元サイズ
-  //global_size[0] = 1; global_size[1] = 1;
   global_size[0] = teach.width; global_size[1] = teach.height;
+
   // 引数の設定
   clSetKernelArg(prop.kernel, 0, sizeof(cl_mem), (const void *)&in_width);
   clSetKernelArg(prop.kernel, 1, sizeof(cl_mem), (const void *)&in_height);
   clSetKernelArg(prop.kernel, 2, sizeof(cl_mem), (const void *)&cl_gtype);
   clSetKernelArg(prop.kernel, 3, sizeof(cl_mem), (const void *)&in_output);
-  clSetKernelArg(prop.kernel, 4, sizeof(cl_mem), (const void *)&ext_output);
+  clSetKernelArg(prop.kernel, 4, sizeof(cl_mem), (const void *)&ext_input);
+  clSetKernelArg(prop.kernel, 5, sizeof(cl_mem), (const void *)&ext_output);
+
+  // 外部入力の初期化
+  clEnqueueWriteBuffer(prop.queue, ext_input, CL_TRUE, 0,
+      sizeof(double) * img_size, (const void *)n_input, 0, NULL, NULL);
 
   char work_dir[1024];
   for(i = 0; i < POPULATION_SIZE; i++) {
@@ -91,15 +99,19 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
           sizeof(double) * img_size, (void *)n_in_output, 0, NULL, NULL);
       clEnqueueReadBuffer(prop.queue, ext_output, CL_TRUE, 0,
           sizeof(double) * img_size, (void *)n_ext_output, 0, NULL, NULL);
-    }
-    conv_regulation(teach.width, teach.height, n_ext_output);
-    sprintf(work_dir, "works/crfcn_in%03d.png", i);
-    pnwrite_from_double(work_dir, teach.width, teach.height, n_in_output);
-    sprintf(work_dir, "works/crfcn_ex%03d.png", i);
-    pnwrite_from_double(work_dir, teach.width, teach.height, n_ext_output);
 
-    pr_fitness[i] = calc_fitness(teach.width, teach.height,
-        n_teach, n_ext_output, n_weight);
+      sprintf(work_dir, "works/crfcn_in%03d_%02d.png", i, tr);
+      pnwrite_from_double(work_dir, teach.width, teach.height, n_in_output);
+      sprintf(work_dir, "works/crfcn_ex%03d_%02d.png", i, tr);
+      pnwrite_from_double(work_dir, teach.width, teach.height, n_ext_output);
+    }
+
+    if(conv_regulation(teach.width, teach.height, n_ext_output) != 0)
+      pr_fitness[i] = 0.01;
+    else 
+      pr_fitness[i] = calc_fitness(teach.width, teach.height,
+          n_teach, n_ext_output, n_weight);
+
     printf("[個体集合 No.%3d] 適応度 %f\n", i, pr_fitness[i]);
   }
   if(__P_DEBUG) printd("[*] 個体領域の確保と初期化に成功.\n");
@@ -146,19 +158,23 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
         clEnqueueReadBuffer(prop.queue, ext_output, CL_TRUE, 0,
             sizeof(double) * img_size, (void *)n_ext_output, 0, NULL, NULL);
       }
-      conv_regulation(teach.width, teach.height, n_ext_output);
-      ch_fitness[i] = calc_fitness(teach.width, teach.height,
-          n_teach, n_ext_output, n_weight);
+      if(conv_regulation(teach.width, teach.height, n_ext_output) != 0)
+        ch_fitness[i] = 0.01;
+      else
+        ch_fitness[i] = calc_fitness(teach.width, teach.height,
+            n_teach, n_ext_output, n_weight);
     }
 
+    // 適応度の最高値とルーレット選択
     slt_best = numof_best_fitness(ch_fitness, CHILDREN_SIZE);
     slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
+
     while(slt_best == slt_roul ||
         (slt_roul == (CHILDREN_SIZE + 1)))
       slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
 
     best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
-    if(cnt_generation % 2 == 0) {
+    if(cnt_generation % 10 == 0) {
       printf("[経過世代数] %5d\n", cnt_generation);
       printf("[個体集合ランダム選択]        %2d(%f) and %2d(%f)\n",
           slt_rand[0], pr_fitness[slt_rand[0]],
@@ -172,8 +188,10 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     pr_fitness[slt_rand[0]] = ch_fitness[slt_best];
     pr_fitness[slt_rand[1]] = ch_fitness[slt_roul];
 
-    memmove(pr_gtype[slt_rand[0]], ch_gtype[slt_best], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
-    memmove(pr_gtype[slt_rand[1]], ch_gtype[slt_roul], sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
+    memmove(pr_gtype[slt_rand[0]], ch_gtype[slt_best],
+        sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
+    memmove(pr_gtype[slt_rand[1]], ch_gtype[slt_roul],
+        sizeof(genotype_t) * MAX_GENOTYPE_SIZE);
 
     if(EPSILON < pr_fitness[best_num]) break;
     if(sig_quit) break;
@@ -184,18 +202,21 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
 
   best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
   gprint(best_num, pr_gtype[best_num]);
+
+  transition = (pr_gtype[best_num][0] >> 16) & 0xFF;       // 遷移回数の取得
+
   memmove(n_in_output,  n_input, sizeof(double) * img_size);
   memmove(n_ext_output, n_input, sizeof(double) * img_size);
 
-  transition = (pr_gtype[best_num][0] >> 16) & 0xFF;              // 遷移回数の取得
   clEnqueueWriteBuffer(prop.queue, cl_gtype, CL_TRUE, 0,   // 遺伝子型の書き込み
       gtype_size, (const void *)pr_gtype[best_num], 0, NULL, NULL);
 
   char best_output[1024];
-  for(tr = 0; tr < transition; tr++) {                   // 遷移回数分回す
+  for(tr = 0; tr < transition; tr++) {                       // 遷移回数分回す
     // Kernel関数の実行
     clEnqueueWriteBuffer(prop.queue, in_output, CL_TRUE, 0,  // 内部入力
         sizeof(double) * img_size, (const void *)n_in_output, 0, NULL, NULL);
+
     clEnqueueWriteBuffer(prop.queue, ext_output, CL_TRUE, 0, // 外部入力
         sizeof(double) * img_size, (const void *)n_ext_output, 0, NULL, NULL);
 
@@ -204,6 +225,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
 
     clEnqueueReadBuffer(prop.queue, in_output, CL_TRUE, 0,
         sizeof(double) * img_size, (void *)n_in_output, 0, NULL, NULL);
+
     clEnqueueReadBuffer(prop.queue, ext_output, CL_TRUE, 0,
         sizeof(double) * img_size, (void *)n_ext_output, 0, NULL, NULL);
 
@@ -218,6 +240,7 @@ db_point:
   clReleaseMemObject(in_height);
   clReleaseMemObject(cl_gtype);
   clReleaseMemObject(in_output);
+  clReleaseMemObject(ext_input);
   clReleaseMemObject(ext_output);
 
   free_genotype(pr_gtype, POPULATION_SIZE);

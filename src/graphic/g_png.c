@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <png.h>
 #include "../../include/graphic.h"
 
@@ -96,8 +97,12 @@ int pnwrite_from_double(const char *path,
   data = (uchar **)calloc(height, sizeof(uchar *));
   for(i = 0; i < height; i++) {
     data[i] = (uchar *)calloc(width, sizeof(uchar));
-    for(j = 0; j < width; j++)
+    for(j = 0; j < width; j++) {
+      if(isnan(output[i * width + j]))     data[i][j] = 1.0;
+      if(output[i * width + j] > 1.0)      data[i][j] = 1.0;
+      else if(output[i * width + j] < 0.0) data[i][j] = 0.0;
       data[i][j] = output[i * width + j] * 255.0;
+    }
   }
 
   png_write_info(png_ptr, info_ptr);

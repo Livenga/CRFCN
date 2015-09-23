@@ -4,9 +4,10 @@
 __kernel void rfcn(
     __global int *in_width,     // 横幅
     __global int *in_height,    // 縦幅
-    __global genotype_t *gtype,  // 遺伝子型
+    __global genotype_t *gtype, // 遺伝子型
     __global double *in_output, // 内部入力
-    __global double *ext_output // 外部入力
+    __global double *ext_input, // 外部入力
+    __global double *ext_output // 外部出力
     ) {
   const int x = get_global_id(0), y = get_global_id(1);  // 位置
   const int width  = (*in_width), height = (*in_height); // 画像サイズ
@@ -69,7 +70,7 @@ __kernel void rfcn(
 
         // 外部入力の変換
         rw_ext_input    = w[(gtype[5 + INTERNAL_SIZE] >> position) & 0x0F];
-        external_input = rw_ext_input * ext_output[y * width + x];
+        external_input = rw_ext_input * ext_input[y * width + x];
 
         // 隠れ層ユニットの変換
         for(j = 0; j < column; j++)

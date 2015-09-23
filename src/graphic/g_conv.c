@@ -23,15 +23,19 @@ void conv_weight(graphic teach, graphic input, graphic *weight) {
   }
 }
 
-void conv_regulation(const int width, const int height, double *output) {
-  int i, j, pos;
+int conv_regulation(const int width, const int height, double *output) {
+  int i, j, pos, do_nan = 0;
 
   for(i = 0; i < height; i++) {
     for(j = 0; j < width; j++) {
       pos = i * width + j;
-      if(isnan(output[pos])) output[pos]     = 1.0;
+      if(isnan(output[pos])) {
+        output[pos] = 0.0;
+        do_nan = 1;
+      }
       if(output[pos] > 1.0) output[pos]      = 1.0;
       else if(output[pos] < 0.0) output[pos] = 0.0;
     }
   }
+  return do_nan;
 }
