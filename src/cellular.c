@@ -50,8 +50,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
       sizeof(int), (void *)&teach.height, &status);
   cl_gtype = clCreateBuffer(prop.context, CL_MEM_READ_ONLY,
       gtype_size, NULL, &status);
-  cl_input = clCreateBuffer(prop.context, CL_MEM_READ_ONLY,
-      sizeof(double) * img_size, NULL, NULL);
   in_output = clCreateBuffer(prop.context, CL_MEM_READ_WRITE,
       sizeof(double) * img_size, NULL, NULL);
   ext_output = clCreateBuffer(prop.context, CL_MEM_READ_WRITE,
@@ -63,9 +61,8 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
   clSetKernelArg(prop.kernel, 0, sizeof(cl_mem), (const void *)&in_width);
   clSetKernelArg(prop.kernel, 1, sizeof(cl_mem), (const void *)&in_height);
   clSetKernelArg(prop.kernel, 2, sizeof(cl_mem), (const void *)&cl_gtype);
-  clSetKernelArg(prop.kernel, 3, sizeof(cl_mem), (const void *)&cl_input);
-  clSetKernelArg(prop.kernel, 4, sizeof(cl_mem), (const void *)&in_output);
-  clSetKernelArg(prop.kernel, 5, sizeof(cl_mem), (const void *)&ext_output);
+  clSetKernelArg(prop.kernel, 3, sizeof(cl_mem), (const void *)&in_output);
+  clSetKernelArg(prop.kernel, 4, sizeof(cl_mem), (const void *)&ext_output);
 
   char work_dir[1024];
   for(i = 0; i < POPULATION_SIZE; i++) {
@@ -79,8 +76,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
     transition = (pr_gtype[i][0] >> 16) & 0xFF;              // 遷移回数の取得
     clEnqueueWriteBuffer(prop.queue, cl_gtype, CL_TRUE, 0,   // 遺伝子型の書き込み
         gtype_size, (const void *)pr_gtype[i], 0, NULL, NULL);
-    clEnqueueWriteBuffer(prop.queue, cl_input, CL_TRUE, 0,   // 入力情報
-        sizeof(double) * img_size, (const void *)n_input, 0, NULL, NULL);
 
     for(tr = 0; tr < transition; tr++) {                   // 遷移回数分回す
       // Kernel関数の実行
@@ -135,8 +130,6 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
       transition = (ch_gtype[i][0] >> 16) & 0xFF;              // 遷移回数の取得
       clEnqueueWriteBuffer(prop.queue, cl_gtype, CL_TRUE, 0,   // 遺伝子型の書き込み
           gtype_size, (const void *)ch_gtype[i], 0, NULL, NULL);
-      clEnqueueWriteBuffer(prop.queue, cl_input, CL_TRUE, 0,   // 入力情報
-          sizeof(double) * img_size, (const void *)n_input, 0, NULL, NULL);
 
       for(tr = 0; tr < transition; tr++) {                   // 遷移回数分回す
         // Kernel関数の実行
@@ -160,6 +153,9 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
 
     slt_best = numof_best_fitness(ch_fitness, CHILDREN_SIZE);
     slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
+    while(slt_best == slt_roul ||
+        (slt_roul == (CHILDREN_SIZE + 1)))
+      slt_roul = numof_roulette(ch_fitness, CHILDREN_SIZE);
 
     best_num = numof_best_fitness(pr_fitness, POPULATION_SIZE);
     if(cnt_generation % 2 == 0) {
@@ -170,6 +166,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
       printf("[子個体集合 最高とルーレット] %2d(%f) and %2d(%f)\n\n",
           slt_best, ch_fitness[slt_best], slt_roul, ch_fitness[slt_roul]);
       printf("[個体集合最高適応度] %2d(%f)\n\n", best_num, pr_fitness[best_num]);
+      gprint(best_num, pr_gtype[best_num]);
     }
 
     pr_fitness[slt_rand[0]] = ch_fitness[slt_best];
@@ -193,8 +190,7 @@ void genetic_operation(cl_prop prop, graphic teach, graphic input, graphic weigh
   transition = (pr_gtype[best_num][0] >> 16) & 0xFF;              // 遷移回数の取得
   clEnqueueWriteBuffer(prop.queue, cl_gtype, CL_TRUE, 0,   // 遺伝子型の書き込み
       gtype_size, (const void *)pr_gtype[best_num], 0, NULL, NULL);
-  clEnqueueWriteBuffer(prop.queue, cl_input, CL_TRUE, 0,   // 入力情報
-      sizeof(double) * img_size, (const void *)n_input, 0, NULL, NULL);
+
   char best_output[1024];
   for(tr = 0; tr < transition; tr++) {                   // 遷移回数分回す
     // Kernel関数の実行
@@ -221,7 +217,6 @@ db_point:
   clReleaseMemObject(in_width);
   clReleaseMemObject(in_height);
   clReleaseMemObject(cl_gtype);
-  clReleaseMemObject(cl_input);
   clReleaseMemObject(in_output);
   clReleaseMemObject(ext_output);
 

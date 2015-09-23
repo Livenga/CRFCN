@@ -115,3 +115,11 @@ const char *fname(const int f_num) {
   }
   return msg;
 }
+
+// 16進数の染色体コードを表示
+void dprint(genotype gtype) {
+  int i, row = gtype[0] & 0xFF;
+
+  for(i = 0; i < MAX_GENOTYPE_SIZE; i++)
+    printf("0x%08X\n", gtype[i]);
+}

@@ -36,10 +36,11 @@ extern void free_genotype(genotype *gtype, const int population);
 /* src/genetic/gn_crossover.c */
 extern void gcrossover(genotype *ch_gtype, genotype pr_gtype1, genotype pr_gtype2,
     const int population);
+extern unsigned int get_gate(const int column);
 
 /* src/genetic/gn_mutation.c */
 extern void gmutation(genotype gtype);
-extern void gunit_mutation(genotype gtype);
+extern int gunit_mutation(genotype gtype);
 
 /* src/genetic/gn_selection.c */
 extern int numof_best_fitness(const double *fitness, const int population);
@@ -47,6 +48,8 @@ extern int numof_roulette(const double *fitness, const int population);
 
 /* src/genetic/gn_print.c */
 extern void gprint(const int num, genotype gtype);
+extern void dprint(genotype gtype);
+
 /* src/calc/fitness.c */
 extern double calc_fitness(const int width, const int height,
     double *t, double *o, double *w);

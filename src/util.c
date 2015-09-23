@@ -48,5 +48,6 @@ char **code_paths(int *cnt, const char *dir) {
       paths = (char **)realloc(paths, sizeof(char *) * (*cnt));
     }
   }
+  closedir(o_dir);
   return paths;
 }

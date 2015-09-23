@@ -29,7 +29,7 @@ void conv_regulation(const int width, const int height, double *output) {
   for(i = 0; i < height; i++) {
     for(j = 0; j < width; j++) {
       pos = i * width + j;
-      if(isnan(output[pos])) output[pos]     = 0.0;
+      if(isnan(output[pos])) output[pos]     = 1.0;
       if(output[pos] > 1.0) output[pos]      = 1.0;
       else if(output[pos] < 0.0) output[pos] = 0.0;
     }

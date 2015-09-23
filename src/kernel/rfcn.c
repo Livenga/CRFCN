@@ -5,15 +5,18 @@ __kernel void rfcn(
     __global int *in_width,     // 横幅
     __global int *in_height,    // 縦幅
     __global genotype_t *gtype,  // 遺伝子型
-    __global double *input,     // 入力
     __global double *in_output, // 内部入力
     __global double *ext_output // 外部入力
     ) {
   const int x = get_global_id(0), y = get_global_id(1);  // 位置
   const int width  = (*in_width), height = (*in_height); // 画像サイズ
   const int column = (gtype[0] >> 8) & 0x0F;
-  const int w_table[5][5] = {{4, 5, 3, 5, 4}, {5, 2, 1, 2, 5}, {3, 1, 0, 1, 3},
-    {5, 2, 1, 2, 5}, {4, 5, 3, 5, 4}};
+  const int w_table[5][5] = {
+    {4, 5, 3, 5, 4},
+    {5, 2, 1, 2, 5},
+    {3, 1, 0, 1, 3},
+    {5, 2, 1, 2, 5},
+    {4, 5, 3, 5, 4}};
 
   const double alpha[] = {-4.0, -2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 2.0, 4.0},
         thr[]   = {-8.0, -4.0, -2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 2.0, 4.0, 8.0},
@@ -50,6 +53,7 @@ __kernel void rfcn(
         // 近傍入力の変換
         for(j = 0; j < INTERNAL_SIZE; j++)
           rw_internal[j] = w[(gtype[5 + j] >> position) & 0x0F];
+
         for(iy = 0; iy < 5; iy++) {
           posY = y + iy - 2;
           for(ix = 0; ix < 5; ix++) {
@@ -69,7 +73,8 @@ __kernel void rfcn(
 
         // 隠れ層ユニットの変換
         for(j = 0; j < column; j++)
-          rw_unit[j] = w[(gtype[5 + INTERNAL_SIZE + 1 + j] >> position) & 0x0F];
+          rw_unit[j] = w[(gtype[6 + INTERNAL_SIZE + j] >> position) & 0x0F];
+
         for(j = 0; j < column; j++) {
           unit[j] = op_rfcn[j] * rw_unit[j];
         }
@@ -79,6 +84,9 @@ __kernel void rfcn(
           input_x += external_input;
           for(j = 0; j < column; j++)
             input_x += unit[j];
+
+          input_x -= rw_thr[i];
+
           switch(r_func[i]) {
             case SIGMOID:   tmp_op = calc_sigmoid(input_x, r_alpha[i]);   break;
             case LINEAR:    tmp_op = calc_linear(input_x, r_alpha[i]);    break;
@@ -88,7 +96,7 @@ __kernel void rfcn(
             case STEP:      tmp_op = calc_step(input_x, r_alpha[i]);      break;
           }
         }
-        else {
+        else if(r_func[i] <= RANGE) {
           switch(r_func[i]) {
             case SUM:   tmp_op = calc_sum(column, internal_input,
                           external_input, unit); break;
@@ -101,6 +109,10 @@ __kernel void rfcn(
             case RANGE: tmp_op = calc_range(column, internal_input,
                             external_input, unit); break;
           }
+        }
+        else {
+          printf("\033[1mBug!!!\033[0m\n");
+          printf("0x%08X\n", gtype[1]);
         }
         tmp_op_rfcn[i] = tmp_op;
       }
